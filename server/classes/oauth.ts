@@ -37,7 +37,7 @@ export default class Oauth {
         return `https://accounts.spotify.com/authorize?${stringifyParams}`;
     }
 
-    genToken = async (state: string, code: string): Promise<any | null> => {
+    genToken = async (state: string, code: string) => {
         const params = new URLSearchParams();
         params.append('code', code);
         params.append('client_id', credentials.client_id);

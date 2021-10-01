@@ -11,7 +11,12 @@ interface Token {
     expiry_date?: number | null;
 }
 
-const scopes = 'user-read-currently-playing user-library-read user-top-read user-read-recently-played user-read-playback-position user-read-email playlist-read-private playlist-read-collaborative';
+const scopes = [
+    'user-read-currently-playing',
+    'user-library-read', 'user-top-read',
+    'user-read-recently-played', 'user-read-playback-position',
+    'user-read-email', 'playlist-read-private', 'playlist-read-collaborative'
+];
 
 const credentials = {
     client_id: '6c7d6c1fdef247438ebe3f46af4aa8b4',
@@ -25,7 +30,7 @@ export default class Oauth {
             response_type: 'code',
             client_id: credentials.client_id,
             redirect_uri: credentials.redirect_uri,
-            scope: scopes,
+            scope: scopes.join(' '),
             state
         });
 
@@ -45,11 +50,11 @@ export default class Oauth {
             }
         }
 
-        return await new Promise(resolve => {
+        return await new Promise<Token | null>(resolve => {
             axios.post(
                'https://accounts.spotify.com/api/token',
                 params, config
-            ).then(res => resolve(res.data))
+            ).then(res => resolve(res.data as Token))
                 .catch(err => {
                     console.log(err);
                     resolve(null);

@@ -9,3 +9,43 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model UserIdentifier {
+  id          Int      @id @default(autoincrement())
+  browserName String
+  osName      String
+  country     String
+  regionName  String
+  city        String
+  address     String
+  userId      String
+  sessionId   String   @unique
+  created     DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  Session     Session  @relation(fields: [sessionId], references: [session], onDelete: Cascade)
+}
+
+model Session {
+  id       Int             @id @default(autoincrement())
+  session  String          @unique
+  valid    DateTime
+  created  DateTime        @default(now())
+  updated  DateTime        @updatedAt
+  userId   String
+  identity UserIdentifier?
+  user     User            @relation(fields: [userId], references: [userId], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  userId         String           @unique
+  role           Role             @default(USER)
+  username       String
+  UserIdentifier UserIdentifier[]
+  Session        Session[]
+}
